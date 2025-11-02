@@ -20,7 +20,17 @@ jobs:
         if [ -d "kubernetes" ]; then
           find kubernetes/ -name "*.yaml" -o -name "*.yml" | while read file; do
             echo "Validating: $file"
-            python3 -c "import yaml; yaml.safe_load(open('$file'))" && echo "✅ $file - Valid"
+            # Multiple documents handle karne ke liye
+            python3 -c "
+import yaml
+try:
+    with open('$file') as f:
+        documents = list(yaml.safe_load_all(f))
+    print('✅ $file - Valid (' + str(len(documents)) + ' documents)')
+except Exception as e:
+    print('❌ $file - Error:', str(e))
+    exit(1)
+            "
           done
         else
           echo "❌ kubernetes/ directory not found"
