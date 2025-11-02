@@ -16,7 +16,7 @@ jobs:
     
     - name: Validate YAML syntax
       run: |
-        echo "🔍 Checking YAML files in kubernetes/ directory..."
+        echo " Checking YAML files in kubernetes/ directory..."
         if [ -d "kubernetes" ]; then
           find kubernetes/ -name "*.yaml" -o -name "*.yml" | while read file; do
             echo "Validating: $file"
