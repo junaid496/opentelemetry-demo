@@ -1,31 +1,37 @@
 name: CI for OpenTelemetry Demo
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+push:
+branches:
+- main
+pull_request:
 
 jobs:
-  validate-yamls:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+validate-yamls:
+name: Validate Kubernetes Manifests
+runs-on: ubuntu-latest
+steps:
+- name: Checkout repository
+uses: actions/checkout@v4
 
-      # ✅ Fixed kubeval step (using maintained docker image)
-      - name: Validate Kubernetes Manifests
-        uses: docker://ghcr.io/instrumenta/kubeval:latest
-        with:
-          args: ./kubernetes/
+```
+  - name: Validate YAML syntax
+    run: |
+      sudo apt-get update -y
+      sudo apt-get install -y yamllint
+      yamllint kubernetes/
+```
 
-  notify-argocd:
-    needs: validate-yamls
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify ArgoCD to Sync
-        run: |
-          curl -k -X POST https://a5cde3e6cf64645d4b9f39093b86736c-1645307027.us-east-1.elb.amazonaws.com/api/v1/applications/otel-demo/sync \
-          -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
+notify-argocd:
+name: Notify ArgoCD for Sync
+needs: validate-yamls
+runs-on: ubuntu-latest
+steps:
+- name: Trigger ArgoCD Sync
+run: |
+curl -k -X POST [https://a5cde3e6cf64645d4b9f39093b86736c-1645307027.us-east-1.elb.amazonaws.com/api/v1/applications/otel-demo/sync](https://a5cde3e6cf64645d4b9f39093b86736c-1645307027.us-east-1.elb.amazonaws.com/api/v1/applications/otel-demo/sync) 
+-H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" 
+-H "Content-Type: application/json"
+
 
 
