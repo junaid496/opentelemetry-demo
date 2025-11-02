@@ -1,0 +1,28 @@
+name: CI for OpenTelemetry Demo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate-yamls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Kubernetes Manifests
+        uses: instrumenta/kubeval-action@v1.0.0
+        with:
+          files: kubernetes/
+
+  notify-argocd:
+    needs: validate-yamls
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify ArgoCD to Sync
+        run: |
+          curl -k -X POST https://a5cde3e6cf64645d4b9f39093b86736c-1645-307027.us-east-1.elb.amazonaws.com/api/v1/applications/otel-demo/sync \
+          -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
