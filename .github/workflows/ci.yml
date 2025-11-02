@@ -26,7 +26,7 @@ import yaml
 try:
     with open('$file') as f:
         documents = list(yaml.safe_load_all(f))
-    print('✅ $file - Valid (' + str(len(documents)) + ' documents)')
+    print(' $file - Valid (' + str(len(documents)) + ' documents)')
 except Exception as e:
     print('❌ $file - Error:', str(e))
     exit(1)
