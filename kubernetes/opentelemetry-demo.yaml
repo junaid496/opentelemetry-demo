@@ -20144,4 +20144,3 @@ spec:
         - name: config-emptydir
           mountPath: /usr/share/opensearch/config/opensearch.yml
           subPath: opensearch.yml
-# Junaid
